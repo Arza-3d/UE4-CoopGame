@@ -2,6 +2,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -21,39 +22,38 @@ void ASWeapon::BeginPlay()
 	
 }
 
-void ASWeapon::Fire()
+void ASWeapon::Fire(FHitResult& HitResult)
 {
 	AActor* owner = GetOwner();
 
 	if (owner)
 	{
-		FVector start, end;
+		FVector start, end, shotDirection;
 		{
 			FVector eyeLocation;
 			FRotator eyeRotator;
 			owner->GetActorEyesViewPoint(eyeLocation, eyeRotator);
 
 			start = eyeLocation;
-			end = eyeLocation + (eyeRotator.Vector() * 10000.0f);
+			shotDirection = eyeRotator.Vector();
+			end = eyeLocation + (shotDirection * 10000.0f);
 		}
 
 		{
-			FHitResult hitResult;
-			
+			FCollisionQueryParams params;
+			FCollisionResponseParams responseParam;
+			params.AddIgnoredActor(owner);
+			params.AddIgnoredActor(this);
+			params.bTraceComplex = true;
+
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Visibility, params, responseParam))
 			{
-				FCollisionQueryParams params;
-				FCollisionResponseParams responseParam;
-				params.AddIgnoredActor(owner);
-				params.AddIgnoredActor(this);
-				params.bTraceComplex = true;
+				AActor* hitActor = HitResult.GetActor();
 
-				if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECC_Visibility, params, responseParam))
-				{
-
-				}
+				UGameplayStatics::ApplyPointDamage(hitActor, 20.0f, shotDirection, HitResult, owner->GetInstigatorController(), this, DamageType);
 			}
-			
-			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 8.0f, 0, 3.0f);
+
+			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1.0f, 0, 1.0f);
 		}
 		
 	}
