@@ -3,6 +3,8 @@
 #include "Camera\CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
+
 
 
 // Sets default values
@@ -20,6 +22,8 @@ ASCharacter::ASCharacter()
 
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(RootComponent);
+
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +50,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("TurnRight", this, &ASCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &ASCharacter::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed,this, &ASCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::StopCrouch);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -56,5 +63,15 @@ void ASCharacter::MoveForward(float Value)
 void ASCharacter::MoveRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
+}
+
+void ASCharacter::BeginCrouch()
+{
+	Crouch();
+}
+
+void ASCharacter::StopCrouch()
+{
+	UnCrouch();
 }
 

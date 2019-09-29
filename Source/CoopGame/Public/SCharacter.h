@@ -44,4 +44,7 @@ private:
 
 	void MoveRight(float Value);
 
+	void BeginCrouch();
+
+	void StopCrouch();
 };
