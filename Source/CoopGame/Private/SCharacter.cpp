@@ -2,7 +2,7 @@
 #include "Components\InputComponent.h"
 #include "Camera\CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Components/SkeletalMeshComponent.h"
+//#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 
 
@@ -20,8 +20,8 @@ ASCharacter::ASCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
-	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	MeshComp->SetupAttachment(RootComponent);
+	/*MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	MeshComp->SetupAttachment(RootComponent);*/
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
