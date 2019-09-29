@@ -1,4 +1,7 @@
 #include "..\Public\SWeapon.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -15,6 +18,46 @@ ASWeapon::ASWeapon()
 void ASWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+	
+}
+
+void ASWeapon::Fire()
+{
+	AActor* owner = GetOwner();
+
+	if (owner)
+	{
+		FVector start, end;
+		{
+			FVector eyeLocation;
+			FRotator eyeRotator;
+			owner->GetActorEyesViewPoint(eyeLocation, eyeRotator);
+
+			start = eyeLocation;
+			end = eyeLocation + (eyeRotator.Vector() * 10000.0f);
+		}
+
+		{
+			FHitResult hitResult;
+			
+			{
+				FCollisionQueryParams params;
+				FCollisionResponseParams responseParam;
+				params.AddIgnoredActor(owner);
+				params.AddIgnoredActor(this);
+				params.bTraceComplex = true;
+
+				if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECC_Visibility, params, responseParam))
+				{
+
+				}
+			}
+			
+			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 8.0f, 0, 3.0f);
+		}
+		
+	}
+
 	
 }
 

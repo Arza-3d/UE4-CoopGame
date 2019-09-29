@@ -2,10 +2,7 @@
 #include "Components\InputComponent.h"
 #include "Camera\CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-//#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
-
-
 
 // Sets default values
 ASCharacter::ASCharacter()
