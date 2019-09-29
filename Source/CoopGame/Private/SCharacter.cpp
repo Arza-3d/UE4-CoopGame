@@ -1,5 +1,5 @@
-#include "Components\InputComponent.h"
 #include "..\Public\SCharacter.h"
+#include "Components\InputComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -31,8 +31,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
 
-	PlayerInputComponent->BindAxis("TurnRight", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("TurnRight", this, &ASCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &ASCharacter::AddControllerPitchInput);
 }
 
 void ASCharacter::MoveForward(float Value)
