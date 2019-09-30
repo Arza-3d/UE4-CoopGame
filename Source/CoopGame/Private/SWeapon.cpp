@@ -3,6 +3,8 @@
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles\WorldPSCPool.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -22,7 +24,7 @@ void ASWeapon::BeginPlay()
 	
 }
 
-void ASWeapon::Fire(FHitResult& HitResult)
+void ASWeapon::Fire(FHitResult& Hit)
 {
 	AActor* owner = GetOwner();
 
@@ -46,19 +48,25 @@ void ASWeapon::Fire(FHitResult& HitResult)
 			params.AddIgnoredActor(this);
 			params.bTraceComplex = true;
 
-			if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Visibility, params, responseParam))
+			if (GetWorld()->LineTraceSingleByChannel(Hit, start, end, ECC_Visibility, params, responseParam))
 			{
-				AActor* hitActor = HitResult.GetActor();
+				AActor* hitActor = Hit.GetActor();
 
-				UGameplayStatics::ApplyPointDamage(hitActor, 20.0f, shotDirection, HitResult, owner->GetInstigatorController(), this, DamageType);
+				UGameplayStatics::ApplyPointDamage(hitActor, 20.0f, shotDirection, Hit, owner->GetInstigatorController(), this, DamageType);
+
+				if (HitEffect)
+				{	
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation(), FVector(1.f), true);
+				}
+
+				if (MuzzleEffect)
+				{
+					UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
+				}
 			}
-
 			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1.0f, 0, 1.0f);
 		}
-		
 	}
-
-	
 }
 
 // Called every frame

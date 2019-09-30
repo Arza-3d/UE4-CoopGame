@@ -7,6 +7,7 @@
 #include "SWeapon.generated.h"
 
 class USkeletalMeshComponent;
+class UParticleSystem;
 
 UCLASS()
 class COOPGAME_API ASWeapon : public AActor
@@ -28,8 +29,20 @@ protected:
 	USkeletalMeshComponent* MeshComp;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void Fire(FHitResult& HitResult);
+	void Fire(FHitResult& Hit);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<UDamageType> DamageType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* HitEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* HitCharacterEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* MuzzleEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FName MuzzleSocketName = "MuzzleSocket";
 };
