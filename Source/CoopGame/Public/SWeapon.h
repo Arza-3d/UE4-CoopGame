@@ -41,4 +41,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FName TracerTargetName = "BeamEnd";
+
+	void PlayFireEffect(FVector TargetLocation);
 };
