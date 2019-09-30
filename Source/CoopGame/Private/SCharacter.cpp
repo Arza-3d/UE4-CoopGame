@@ -17,17 +17,16 @@ ASCharacter::ASCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
-	/*MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	MeshComp->SetupAttachment(RootComponent);*/
-
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	DefaultFOV = CameraComp->FieldOfView;
 }
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -35,6 +34,11 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	float targetFOV = bWantsToZoom ? ZoomFOV : DefaultFOV;
+
+	float newFOV = FMath::FInterpTo(CameraComp->FieldOfView, targetFOV, DeltaTime, ZoomInterpSpeed);
+
+	CameraComp->SetFieldOfView(newFOV);
 }
 
 // Called to bind functionality to input
@@ -53,6 +57,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ASCharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
+	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const
@@ -84,3 +91,12 @@ void ASCharacter::StopCrouch()
 	UnCrouch();
 }
 
+void ASCharacter::BeginZoom()
+{
+	bWantsToZoom = true;
+}
+
+void ASCharacter::EndZoom()
+{
+	bWantsToZoom = false;
+}

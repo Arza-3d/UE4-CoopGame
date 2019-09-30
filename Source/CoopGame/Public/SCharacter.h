@@ -37,8 +37,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USkeletalMeshComponent* MeshComp;*/
+	bool bWantsToZoom;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Aiming")
+	float ZoomFOV = 50.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Aiming", Meta = (ClampMin = "0.1", ClampMax = "100"))
+	float ZoomInterpSpeed = 3.f;
+
+	float DefaultFOV;
 
 private:
 
@@ -49,4 +56,8 @@ private:
 	void BeginCrouch();
 
 	void StopCrouch();
+
+	void BeginZoom();
+
+	void EndZoom();
 };
