@@ -1,12 +1,20 @@
 #include "..\Public\SWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
-//#include "DrawDebugHelpers.h"
+#include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles\WorldPSCPool.h"
 #include "Particles\ParticleSystemComponent.h"
 
+static int32 DebugWeaponDrawing = 0;
+
+FAutoConsoleVariableRef CVARDebugWeaponDrawing (
+	TEXT("COOP.DebugWeapons"),
+	DebugWeaponDrawing,
+	TEXT("Draw debug line for weapon"),
+	ECVF_Cheat
+);
 // Sets default values
 ASWeapon::ASWeapon()
 {
@@ -67,7 +75,9 @@ void ASWeapon::Fire(FHitResult& Hit)
 				}
 			}
 
-			//DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1.0f, 0, 1.0f);
+			if (DebugWeaponDrawing > 0)
+				DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1.0f, 0, 1.0f);
+
 			if (TracerEffect)
 			{
 				FVector muzzleSocketLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
