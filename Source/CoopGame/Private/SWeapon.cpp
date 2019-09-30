@@ -1,10 +1,11 @@
 #include "..\Public\SWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
-#include "DrawDebugHelpers.h"
+//#include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles\WorldPSCPool.h"
+#include "Particles\ParticleSystemComponent.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -48,7 +49,8 @@ void ASWeapon::Fire(FHitResult& Hit)
 			params.AddIgnoredActor(this);
 			params.bTraceComplex = true;
 
-			if (GetWorld()->LineTraceSingleByChannel(Hit, start, end, ECC_Visibility, params, responseParam))
+			bool hitSomething = GetWorld()->LineTraceSingleByChannel(Hit, start, end, ECC_Visibility, params, responseParam);
+			if (hitSomething)
 			{
 				AActor* hitActor = Hit.GetActor();
 
@@ -64,7 +66,19 @@ void ASWeapon::Fire(FHitResult& Hit)
 					UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
 				}
 			}
-			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1.0f, 0, 1.0f);
+
+			//DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 1.0f, 0, 1.0f);
+			if (TracerEffect)
+			{
+				FVector muzzleSocketLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
+
+				UParticleSystemComponent* tracerComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, muzzleSocketLocation);
+				if (tracerComp)
+				{
+					FVector target = (hitSomething) ? Hit.ImpactPoint : end;
+					tracerComp->SetVectorParameter(TracerTargetName, target);
+				}
+			}
 		}
 	}
 }
